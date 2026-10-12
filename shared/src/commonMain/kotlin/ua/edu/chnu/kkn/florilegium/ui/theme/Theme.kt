@@ -10,29 +10,25 @@ import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.unit.dp
 
-// Radius 4dp base, density 1.15× — the spacing scale below matches the
-// --space-* tokens (4.6 / 9.2 / 13.8 / 18.4 / 27.6 / 36.8 px).
-
 val ClassicalShapes = Shapes(
     extraSmall = RoundedCornerShape(2.dp),
     small = RoundedCornerShape(4.dp),
     medium = RoundedCornerShape(4.dp),
     large = RoundedCornerShape(7.dp),
-    extraLarge = RoundedCornerShape(18.dp), // FAB
+    extraLarge = RoundedCornerShape(18.dp),
 )
 
 object Space {
-    val x1 = 5.dp
-    val x2 = 9.dp
-    val x3 = 14.dp
-    val x4 = 18.dp
-    val x6 = 28.dp
-    val x8 = 37.dp
+    val x1 = 4.dp
+    val x2 = 8.dp
+    val x3 = 12.dp
+    val x4 = 16.dp
+    val x6 = 24.dp
+    val x8 = 32.dp
 }
 
-val LocalAppColors = staticCompositionLocalOf { LightAppColors }
+private val LocalAppColors = staticCompositionLocalOf { LightAppColors }
 
-/** Design tokens that Material's [androidx.compose.material3.ColorScheme] has no slot for. */
 object Florilegium {
     val colors: FlorilegiumColors
         @Composable @ReadOnlyComposable

@@ -17,10 +17,6 @@ import florilegium.shared.generated.resources.lora_medium
 import florilegium.shared.generated.resources.lora_regular
 import org.jetbrains.compose.resources.Font
 
-// Cormorant Garamond → headings · Lora → body. No sans-serif, no bold:
-// semibold (600) is the ceiling for interface headings; display sizes
-// set lighter (300–400).
-
 @Composable
 fun headingFamily() = FontFamily(
     Font(Res.font.cormorant_garamond_light, FontWeight.Light),

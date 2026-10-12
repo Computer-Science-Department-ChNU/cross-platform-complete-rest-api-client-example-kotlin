@@ -4,9 +4,6 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.graphics.Color
 
-// ── Classical tokens ────────────────────────────────────────────────
-// Ground / ink / single gold accent + the 100–900 ramps.
-
 val Bg = Color(0xFFF3F2F2)
 val Surface = Color(0xFFFBFAF9)
 val SurfaceMuted = Color(0xFFEAE9E9)
@@ -33,16 +30,10 @@ val Accent700 = Color(0xFF7D5411)
 val Accent800 = Color(0xFF5A3B0A)
 val Accent900 = Color(0xFF3A270D)
 
-// Dark ground (warm near-black, accent stepped up so gold keeps contrast)
 val DarkBg = Color(0xFF171614)
 val DarkSurface = Color(0xFF201F1D)
 val DarkSurfaceMuted = Color(0xFF2D2B2B)
 val DarkInk = Color(0xFFF1EFEC)
-
-// ── Material 3 schemes ──────────────────────────────────────────────
-// Accent is stroke-only in this system: primary is used for outlines,
-// icons and text, never as a filled container. Containers stay on the
-// ground, so primaryContainer is the faintest accent tint.
 
 val ClassicalLight = lightColorScheme(
     primary = Accent700,
@@ -89,10 +80,6 @@ val ClassicalDark = darkColorScheme(
     error = Color(0xFFE08C7A),
     onError = DarkBg,
 )
-
-// ── App tokens ──────────────────────────────────────────────────────
-// The --app-* variables from the design: hairlines instead of elevation,
-// gold as stroke, a faint accent wash for the few tinted surfaces.
 
 data class FlorilegiumColors(
     val accent: Color,

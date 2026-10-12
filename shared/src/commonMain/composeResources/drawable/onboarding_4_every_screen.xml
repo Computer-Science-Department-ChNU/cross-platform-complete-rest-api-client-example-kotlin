@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Phone and tablet : Classical accent stroke. Colors reference @color/classical_accent and @color/classical_accent_tint (see colors.xml). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="260"
+    android:viewportHeight="260">
+    <path
+        android:pathData="M40 72h120a6 6 0 0 1 6 6v86a6 6 0 0 1-6 6H40a6 6 0 0 1-6-6V78a6 6 0 0 1 6-6z"
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="@color/classical_accent"
+        android:strokeWidth="1.2"
+        android:strokeAlpha="1"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M34 96h132"
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="@color/classical_accent"
+        android:strokeWidth="1.2"
+        android:strokeAlpha="0.5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M52 116h44M52 132h44M52 148h30M112 116h38M112 132h38"
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="@color/classical_accent"
+        android:strokeWidth="1.2"
+        android:strokeAlpha="0.4"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M160 104h56a10 10 0 0 1 10 10v112a10 10 0 0 1-10 10h-56a10 10 0 0 1-10-10V114a10 10 0 0 1 10-10z"
+        android:fillColor="@color/classical_accent_tint"
+        android:strokeColor="@color/classical_accent"
+        android:strokeWidth="1.2"
+        android:strokeAlpha="1"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M150 128h76"
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="@color/classical_accent"
+        android:strokeWidth="1.2"
+        android:strokeAlpha="0.5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M166 148h44M166 164h44M166 180h28"
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="@color/classical_accent"
+        android:strokeWidth="1.2"
+        android:strokeAlpha="0.4"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M178 222h20"
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="@color/classical_accent"
+        android:strokeWidth="1.2"
+        android:strokeAlpha="0.6"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M197 88a9 9 0 1 1-18 0a9 9 0 1 1 18 0"
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="@color/classical_accent"
+        android:strokeWidth="1.2"
+        android:strokeAlpha="0.7"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M188 79v-14M181 70l7-5 7 5"
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="@color/classical_accent"
+        android:strokeWidth="1.2"
+        android:strokeAlpha="0.5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+</vector>
