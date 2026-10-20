@@ -18,4 +18,22 @@
 
     <string name="onboarding_screens_title">Для обох рук і обох екранів</string>
     <string name="onboarding_screens_body">Нижня навігація на телефоні, бічна панель і двопанельне читання на планшеті в альбомній орієнтації. Світла й темна теми слідують за системою.</string>
+
+    <!-- Login -->
+    <string name="login_brand">Florilegium</string>
+    <string name="login_title">З поверненням</string>
+    <string name="login_subtitle">Ваша книга виписок, синхронізована на всіх пристроях.</string>
+    <string name="login_email_label">Електронна пошта</string>
+    <string name="login_password_label">Пароль</string>
+    <string name="login_password_show">Показати</string>
+    <string name="login_password_hide">Сховати</string>
+    <string name="login_sign_in">Увійти</string>
+
+    <string name="login_error_email_empty">Введіть електронну пошту</string>
+    <string name="login_error_email_invalid">Введіть коректну адресу, наприклад name@example.com</string>
+    <string name="login_error_password_empty">Введіть пароль</string>
+    <string name="login_error_password_spaces">Пароль не може містити пробілів</string>
+    <string name="login_error_password_too_short">Використайте щонайменше 8 символів</string>
+    <string name="login_error_password_no_letter">Додайте хоча б одну літеру</string>
+    <string name="login_error_password_no_digit">Додайте хоча б одну цифру</string>
 </resources>

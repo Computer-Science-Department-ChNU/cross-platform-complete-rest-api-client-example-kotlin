@@ -18,4 +18,22 @@
 
     <string name="onboarding_screens_title">Made for both hands and both screens</string>
     <string name="onboarding_screens_body">Bottom navigation on a phone, a navigation rail and a two-pane reader on a tablet in landscape. Light and dark schemes follow the system.</string>
+
+    <!-- Login -->
+    <string name="login_brand">Florilegium</string>
+    <string name="login_title">Welcome back</string>
+    <string name="login_subtitle">Your commonplace book, kept in sync across every device.</string>
+    <string name="login_email_label">Email</string>
+    <string name="login_password_label">Password</string>
+    <string name="login_password_show">Show</string>
+    <string name="login_password_hide">Hide</string>
+    <string name="login_sign_in">Sign in</string>
+
+    <string name="login_error_email_empty">Enter your email</string>
+    <string name="login_error_email_invalid">Enter a valid email, e.g. name@example.com</string>
+    <string name="login_error_password_empty">Enter your password</string>
+    <string name="login_error_password_spaces">Password can’t contain spaces</string>
+    <string name="login_error_password_too_short">Use at least 8 characters</string>
+    <string name="login_error_password_no_letter">Add at least one letter</string>
+    <string name="login_error_password_no_digit">Add at least one digit</string>
 </resources>

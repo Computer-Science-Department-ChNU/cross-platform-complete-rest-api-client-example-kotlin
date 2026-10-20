@@ -14,6 +14,7 @@ import ua.edu.chnu.kkn.florilegium.data.local.preferences.AppPreferencesReposito
 import ua.edu.chnu.kkn.florilegium.domain.onboarding.IsOnboardingPassedUseCase
 import ua.edu.chnu.kkn.florilegium.domain.onboarding.MarkOnboardingPassedUseCase
 import ua.edu.chnu.kkn.florilegium.domain.PreferencesRepository
+import ua.edu.chnu.kkn.florilegium.ui.login.LoginViewModel
 import ua.edu.chnu.kkn.florilegium.ui.onboarding.OnboardingViewModel
 
 private fun createSettings() : Settings = Settings()
@@ -29,4 +30,5 @@ val appModule = module {
     factoryOf(::IsOnboardingPassedUseCase)
     viewModel<AppViewModel>()
     viewModel<OnboardingViewModel>()
+    viewModel<LoginViewModel>()
 }

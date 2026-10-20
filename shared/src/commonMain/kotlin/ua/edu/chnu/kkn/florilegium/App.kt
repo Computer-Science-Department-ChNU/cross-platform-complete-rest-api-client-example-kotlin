@@ -53,7 +53,11 @@ fun App() {
                     })
                 }
                 entry<Login> {
-                    LoginScreen()
+                    LoginScreen(
+                        onSignedIn = {
+
+                        }
+                    )
                 }
             },
         )
