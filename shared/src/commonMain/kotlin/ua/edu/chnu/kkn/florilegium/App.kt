@@ -1,49 +1,61 @@
 package ua.edu.chnu.kkn.florilegium
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.safeContentPadding
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import org.jetbrains.compose.resources.painterResource
+import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
+import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.rememberNavBackStack
+import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
+import androidx.navigation3.ui.NavDisplay
+import androidx.savedstate.serialization.SavedStateConfiguration
+import org.koin.compose.viewmodel.koinViewModel
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.polymorphic
+import ua.edu.chnu.kkn.florilegium.ui.login.LoginScreen
+import ua.edu.chnu.kkn.florilegium.ui.onboarding.OnboardingScreen
+import ua.edu.chnu.kkn.florilegium.ui.theme.FlorilegiumTheme
 
-import florilegium.shared.generated.resources.Res
-import florilegium.shared.generated.resources.compose_multiplatform
+@Serializable
+data object Onboarding : NavKey
+
+@Serializable
+data object Login : NavKey
+
+private val navConfig = SavedStateConfiguration {
+    serializersModule = SerializersModule {
+        polymorphic(NavKey::class) {
+            subclass(Onboarding::class, Onboarding.serializer())
+            subclass(Login::class, Login.serializer())
+        }
+    }
+}
 
 @Composable
 @Preview
 fun App() {
-    MaterialTheme {
-        var showContent by remember { mutableStateOf(false) }
-        Column(
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.primaryContainer)
-                .safeContentPadding()
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Button(onClick = { showContent = !showContent }) {
-                Text("Click me!")
-            }
-            AnimatedVisibility(showContent) {
-                val greeting = remember { Greeting().greet() }
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Image(painterResource(Res.drawable.compose_multiplatform), null)
-                    Text("Compose: $greeting")
+    FlorilegiumTheme {
+        val appViewModel = koinViewModel<AppViewModel>()
+        val backStack = rememberNavBackStack(navConfig, appViewModel.startDestination)
+        NavDisplay(
+            backStack = backStack,
+            onBack = { backStack.removeLastOrNull() },
+            entryDecorators = listOf(
+                rememberSaveableStateHolderNavEntryDecorator(),
+                rememberViewModelStoreNavEntryDecorator(),
+            ),
+            entryProvider = entryProvider {
+                entry<Onboarding> {
+                    OnboardingScreen(onFinishOnboarding = {
+                        backStack.add(Login)
+                        backStack.remove(Onboarding)
+                    })
                 }
-            }
-        }
+                entry<Login> {
+                    LoginScreen()
+                }
+            },
+        )
     }
 }

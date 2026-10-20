@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Commonplace book : Classical accent stroke. Colors reference @color/classical_accent and @color/classical_accent_tint (see colors.xml). -->
+<!-- Commonplace book : Classical accent stroke. Colors are literal (Compose resources cannot resolve @color references); drawable-dark/ holds the dark-theme copy. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="120dp"
     android:height="120dp"
@@ -7,48 +7,48 @@
     android:viewportHeight="260">
     <path
         android:pathData="M130 62c-22-13-48-16-70-12v134c22-4 48-1 70 12 22-13 48-16 70-12V50c-22-4-48-1-70 12z"
-        android:fillColor="@android:color/transparent"
-        android:strokeColor="@color/classical_accent"
+        android:fillColor="#00000000"
+        android:strokeColor="#B68235"
         android:strokeWidth="1.2"
         android:strokeAlpha="1"
         android:strokeLineCap="round"
         android:strokeLineJoin="round" />
     <path
         android:pathData="M130 62v134"
-        android:fillColor="@android:color/transparent"
-        android:strokeColor="@color/classical_accent"
+        android:fillColor="#00000000"
+        android:strokeColor="#B68235"
         android:strokeWidth="1.2"
         android:strokeAlpha="1"
         android:strokeLineCap="round"
         android:strokeLineJoin="round" />
     <path
         android:pathData="M76 92h38M76 108h38M76 124h30M146 92h38M146 108h38M146 124h30"
-        android:fillColor="@android:color/transparent"
-        android:strokeColor="@color/classical_accent"
+        android:fillColor="#00000000"
+        android:strokeColor="#B68235"
         android:strokeWidth="1.2"
         android:strokeAlpha="0.45"
         android:strokeLineCap="round"
         android:strokeLineJoin="round" />
     <path
         android:pathData="M130 50v-26M130 24l-14 10M130 24l14 10"
-        android:fillColor="@android:color/transparent"
-        android:strokeColor="@color/classical_accent"
+        android:fillColor="#00000000"
+        android:strokeColor="#B68235"
         android:strokeWidth="1.2"
         android:strokeAlpha="0.55"
         android:strokeLineCap="round"
         android:strokeLineJoin="round" />
     <path
         android:pathData="M143 150a13 13 0 1 1-26 0a13 13 0 1 1 26 0"
-        android:fillColor="@android:color/transparent"
-        android:strokeColor="@color/classical_accent"
+        android:fillColor="#00000000"
+        android:strokeColor="#B68235"
         android:strokeWidth="1.2"
         android:strokeAlpha="0.8"
         android:strokeLineCap="round"
         android:strokeLineJoin="round" />
     <path
         android:pathData="M124 150l5 5 8-11"
-        android:fillColor="@android:color/transparent"
-        android:strokeColor="@color/classical_accent"
+        android:fillColor="#00000000"
+        android:strokeColor="#B68235"
         android:strokeWidth="1.2"
         android:strokeAlpha="0.8"
         android:strokeLineCap="round"

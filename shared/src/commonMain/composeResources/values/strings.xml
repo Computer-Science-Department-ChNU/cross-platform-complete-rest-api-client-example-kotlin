@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Onboarding -->
+    <string name="onboarding_skip">Skip</string>
+    <string name="onboarding_next">Next</string>
+    <string name="onboarding_get_started">Get started</string>
+    <string name="onboarding_counter">%1$s / %2$s</string>
+    <string name="onboarding_page_indicator">Page %1$d of %2$d</string>
+
+    <string name="onboarding_commonplace_title">A commonplace book, reopened</string>
+    <string name="onboarding_commonplace_body">Florilegium keeps the lines you want to keep. One archive, synced to phone, tablet and desktop from a single Compose Multiplatform codebase.</string>
+
+    <string name="onboarding_daily_title">Ten quotes, every morning</string>
+    <string name="onboarding_daily_body">The Daily tab draws a fresh page at dawn — one quote of the day set large, nine more beneath it. Pull the list down whenever you want another draw.</string>
+
+    <string name="onboarding_search_title">Search the whole archive</string>
+    <string name="onboarding_search_body">Everything you have ever saved lives in All quotes. The search button lifts a field into the app bar; type an author or a phrase and the list narrows as you go.</string>
+
+    <string name="onboarding_screens_title">Made for both hands and both screens</string>
+    <string name="onboarding_screens_body">Bottom navigation on a phone, a navigation rail and a two-pane reader on a tablet in landscape. Light and dark schemes follow the system.</string>
+</resources>

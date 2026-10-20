@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Onboarding -->
+    <string name="onboarding_skip">Пропустити</string>
+    <string name="onboarding_next">Далі</string>
+    <string name="onboarding_get_started">Почати</string>
+    <string name="onboarding_counter">%1$s / %2$s</string>
+    <string name="onboarding_page_indicator">Сторінка %1$d з %2$d</string>
+
+    <string name="onboarding_commonplace_title">Книга виписок, відкрита знову</string>
+    <string name="onboarding_commonplace_body">Florilegium зберігає рядки, які ви хочете зберегти. Один архів, синхронізований між телефоном, планшетом і комп’ютером, з єдиної кодової бази Compose Multiplatform.</string>
+
+    <string name="onboarding_daily_title">Десять цитат щоранку</string>
+    <string name="onboarding_daily_body">На світанку вкладка «Щоденне» відкриває нову сторінку: велика цитата дня і ще дев’ять під нею. Потягніть список донизу, коли захочете нову добірку.</string>
+
+    <string name="onboarding_search_title">Пошук у всьому архіві</string>
+    <string name="onboarding_search_body">Усе, що ви колись зберегли, живе у вкладці «Усі цитати». Кнопка пошуку відкриває поле на панелі застосунку: введіть автора чи фразу, і список звужуватиметься просто під час введення.</string>
+
+    <string name="onboarding_screens_title">Для обох рук і обох екранів</string>
+    <string name="onboarding_screens_body">Нижня навігація на телефоні, бічна панель і двопанельне читання на планшеті в альбомній орієнтації. Світла й темна теми слідують за системою.</string>
+</resources>
