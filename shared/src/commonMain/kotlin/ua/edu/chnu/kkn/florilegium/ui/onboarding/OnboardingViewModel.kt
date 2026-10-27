@@ -17,7 +17,7 @@ internal class OnboardingViewModel(
 
     fun onAction(action: OnboardingAction) {
         when (action) {
-            is OnboardingAction.OnboardingPassed -> {
+            is OnboardingAction.CompleteOnboarding -> {
                 markOnboardingPassedUseCase()
                 _events.trySend(OnboardingEvent.OnOnboardingPassed)
             }

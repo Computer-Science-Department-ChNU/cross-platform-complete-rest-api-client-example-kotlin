@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.updateAndGet
 
 @Stable
 internal class LoginViewModel : ViewModel() {
@@ -21,10 +22,10 @@ internal class LoginViewModel : ViewModel() {
 
     fun onAction(action: LoginAction) {
         when (action) {
-            is LoginAction.EmailChanged -> _state.update {
+            is LoginAction.ChangeEmail -> _state.update {
                 it.copy(email = action.email, emailError = it.emailError?.let { LoginValidator.validateEmail(action.email) })
             }
-            is LoginAction.PasswordChanged -> _state.update {
+            is LoginAction.ChangePassword -> _state.update {
                 it.copy(password = action.password, passwordError = it.passwordError?.let { LoginValidator.validatePassword(action.password) })
             }
             is LoginAction.TogglePasswordVisibility -> _state.update { it.copy(isPasswordVisible = !it.isPasswordVisible) }
@@ -33,21 +34,18 @@ internal class LoginViewModel : ViewModel() {
     }
 
     private fun signIn() {
-        _state.update {
+        val state = _state.updateAndGet {
             it.copy(
                 emailError = LoginValidator.validateEmail(it.email),
                 passwordError = LoginValidator.validatePassword(it.password),
             )
         }
-        if (credentialsAreValid()) {
+        if (credentialsAreValid(state)) {
             _events.trySend(LoginEvent.OnSignedIn)
         }
     }
 
-    private fun credentialsAreValid(): Boolean {
-        return with(_state.value) {
-            LoginValidator.validateEmail(email) == null
-                    && LoginValidator.validatePassword(password) == null
-        }
+    private fun credentialsAreValid(state: LoginState): Boolean {
+        return state.emailError == null && state.passwordError == null
     }
 }

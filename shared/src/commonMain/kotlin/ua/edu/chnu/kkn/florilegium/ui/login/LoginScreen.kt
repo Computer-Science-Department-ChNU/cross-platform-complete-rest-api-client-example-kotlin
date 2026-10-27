@@ -37,12 +37,15 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import florilegium.shared.generated.resources.Res
 import florilegium.shared.generated.resources.login_brand
 import florilegium.shared.generated.resources.login_email_label
+import florilegium.shared.generated.resources.login_error_email_invalid
+import florilegium.shared.generated.resources.login_error_password_too_short
 import florilegium.shared.generated.resources.login_password_hide
 import florilegium.shared.generated.resources.login_password_label
 import florilegium.shared.generated.resources.login_password_show
@@ -55,8 +58,10 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import ua.edu.chnu.kkn.florilegium.ui.common.CenteredScrollColumn
 import ua.edu.chnu.kkn.florilegium.ui.common.ObserveEvents
+import ua.edu.chnu.kkn.florilegium.ui.common.PreviewTwoPaneLightDark
 import ua.edu.chnu.kkn.florilegium.ui.common.isTwoPaneLayout
 import ua.edu.chnu.kkn.florilegium.ui.theme.Florilegium
+import ua.edu.chnu.kkn.florilegium.ui.theme.FlorilegiumTheme
 import ua.edu.chnu.kkn.florilegium.ui.theme.Space
 
 private const val EpigraphPaneWeight = 0.46f
@@ -77,29 +82,26 @@ internal fun LoginScreen(
         }
     }
 
-    val login = { viewModel.onAction(LoginAction.SignIn) }
+    LoginContent(state = state, onAction = viewModel::onAction, modifier = modifier)
+}
 
-    val loginForm = @Composable {
-        LoginForm(
-            state = state,
-            onEmailChange = { viewModel.onAction(LoginAction.EmailChanged(it)) },
-            onPasswordChange = { viewModel.onAction(LoginAction.PasswordChanged(it)) },
-            onTogglePasswordVisibility = { viewModel.onAction(LoginAction.TogglePasswordVisibility) },
-            login = login,
-        )
-    }
-
+@Composable
+internal fun LoginContent(
+    state: LoginState,
+    onAction: (LoginAction) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     if (isTwoPaneLayout()) {
-        LoginTwoPane(loginForm = loginForm, login = login, modifier = modifier)
+        LoginTwoPane(state = state, onAction = onAction, modifier = modifier)
     } else {
-        LoginSinglePane(loginForm = loginForm, login = login, modifier = modifier)
+        LoginSinglePane(state = state, onAction = onAction, modifier = modifier)
     }
 }
 
 @Composable
 private fun LoginSinglePane(
-    loginForm: @Composable () -> Unit,
-    login: () -> Unit,
+    state: LoginState,
+    onAction: (LoginAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     CenteredScrollColumn(
@@ -125,9 +127,9 @@ private fun LoginSinglePane(
             )
         }
         Spacer(Modifier.fillMaxWidth().height(1.dp).background(Florilegium.colors.line))
-        loginForm()
+        LoginForm(state = state, onAction = onAction)
         SignInButton(
-            onClick = login,
+            onClick = { onAction(LoginAction.SignIn) },
             modifier = Modifier.fillMaxWidth(),
             contentPadding = PaddingValues(14.dp),
         )
@@ -136,8 +138,8 @@ private fun LoginSinglePane(
 
 @Composable
 private fun LoginTwoPane(
-    loginForm: @Composable () -> Unit,
-    login: () -> Unit,
+    state: LoginState,
+    onAction: (LoginAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -184,9 +186,9 @@ private fun LoginTwoPane(
                     style = MaterialTheme.typography.displaySmall.copy(fontSize = 40.sp, lineHeight = 44.sp),
                     color = MaterialTheme.colorScheme.onBackground,
                 )
-                loginForm()
+                LoginForm(state = state, onAction = onAction)
                 SignInButton(
-                    onClick = login,
+                    onClick = { onAction(LoginAction.SignIn) },
                     contentPadding = PaddingValues(horizontal = 34.dp, vertical = 13.dp),
                 )
             }
@@ -206,30 +208,27 @@ private fun Eyebrow() {
 @Composable
 private fun LoginForm(
     state: LoginState,
-    onEmailChange: (String) -> Unit,
-    onPasswordChange: (String) -> Unit,
-    onTogglePasswordVisibility: () -> Unit,
-    login: () -> Unit,
+    onAction: (LoginAction) -> Unit,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(Space.x4)) {
         LabeledField(
             label = stringResource(Res.string.login_email_label),
             value = state.email,
-            onValueChange = onEmailChange,
+            onValueChange = { onAction(LoginAction.ChangeEmail(it)) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Next),
             errorMessage = state.emailError?.let { stringResource(it) },
         )
         LabeledField(
             label = stringResource(Res.string.login_password_label),
             value = state.password,
-            onValueChange = onPasswordChange,
+            onValueChange = { onAction(LoginAction.ChangePassword(it)) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done),
-            keyboardActions = KeyboardActions(onDone = { login() }),
+            keyboardActions = KeyboardActions(onDone = { onAction(LoginAction.SignIn) }),
             visualTransformation = if (state.isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             errorMessage = state.passwordError?.let { stringResource(it) },
             trailing = {
                 TextButton(
-                    onClick = onTogglePasswordVisibility,
+                    onClick = { onAction(LoginAction.TogglePasswordVisibility) },
                     contentPadding = PaddingValues(horizontal = Space.x2),
                 ) {
                     Text(
@@ -304,5 +303,37 @@ private fun SignInButton(
             style = MaterialTheme.typography.labelLarge,
             color = Florilegium.colors.accent,
         )
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun LoginContentPreview() {
+    FlorilegiumTheme {
+        LoginContent(state = LoginState(), onAction = {})
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun LoginContentErrorsPreview() {
+    FlorilegiumTheme {
+        LoginContent(
+            state = LoginState(
+                email = "name@example",
+                password = "short1",
+                emailError = Res.string.login_error_email_invalid,
+                passwordError = Res.string.login_error_password_too_short,
+            ),
+            onAction = {},
+        )
+    }
+}
+
+@PreviewTwoPaneLightDark
+@Composable
+private fun LoginContentTwoPanePreview() {
+    FlorilegiumTheme {
+        LoginContent(state = LoginState(email = "name@example.com"), onAction = {})
     }
 }

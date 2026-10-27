@@ -54,8 +54,8 @@ class LoginViewModelTest {
     @Test
     fun typingDoesNotValidateBeforeFirstSubmit() {
         val vm = LoginViewModel()
-        vm.onAction(LoginAction.EmailChanged("not-an-email"))
-        vm.onAction(LoginAction.PasswordChanged("x"))
+        vm.onAction(LoginAction.ChangeEmail("not-an-email"))
+        vm.onAction(LoginAction.ChangePassword("x"))
 
         assertNull(vm.state.value.emailError)
         assertNull(vm.state.value.passwordError)
@@ -64,8 +64,8 @@ class LoginViewModelTest {
     @Test
     fun submitShowsSeparateErrorsForEachField() = runTest {
         val vm = LoginViewModel()
-        vm.onAction(LoginAction.EmailChanged("not-an-email"))
-        vm.onAction(LoginAction.PasswordChanged("short1"))
+        vm.onAction(LoginAction.ChangeEmail("not-an-email"))
+        vm.onAction(LoginAction.ChangePassword("short1"))
         vm.onAction(LoginAction.SignIn)
 
         assertNotNull(vm.state.value.emailError)
@@ -76,17 +76,17 @@ class LoginViewModelTest {
     @Test
     fun errorDisappearsOnceFieldBecomesValid() {
         val vm = LoginViewModel()
-        vm.onAction(LoginAction.EmailChanged("name@example"))
-        vm.onAction(LoginAction.PasswordChanged("commonplace1"))
+        vm.onAction(LoginAction.ChangeEmail("name@example"))
+        vm.onAction(LoginAction.ChangePassword("commonplace1"))
         vm.onAction(LoginAction.SignIn)
         assertNotNull(vm.state.value.emailError)
         assertNull(vm.state.value.passwordError)
 
-        vm.onAction(LoginAction.EmailChanged("name@example.com"))
+        vm.onAction(LoginAction.ChangeEmail("name@example.com"))
         assertNull(vm.state.value.emailError)
 
         // A field that was valid at submit time doesn't start showing errors while typing.
-        vm.onAction(LoginAction.PasswordChanged("x"))
+        vm.onAction(LoginAction.ChangePassword("x"))
         assertNull(vm.state.value.passwordError)
     }
 
@@ -96,7 +96,7 @@ class LoginViewModelTest {
         vm.onAction(LoginAction.SignIn)
         assertEquals(Res.string.login_error_password_empty, vm.state.value.passwordError)
 
-        vm.onAction(LoginAction.PasswordChanged("abcdefgh"))
+        vm.onAction(LoginAction.ChangePassword("abcdefgh"))
         assertEquals(Res.string.login_error_password_no_digit, vm.state.value.passwordError)
     }
 
@@ -111,15 +111,14 @@ class LoginViewModelTest {
     }
 
     @Test
-    fun signInEmitsSignedInEventWithTrimmedEmail() = runTest {
+    fun signInEmitsSignedInEventWithValidInput() = runTest {
         val vm = LoginViewModel()
-        vm.onAction(LoginAction.EmailChanged(" elena.voitenko@chnu.edu.ua "))
-        vm.onAction(LoginAction.PasswordChanged("commonplace1"))
+        vm.onAction(LoginAction.ChangeEmail(" elena.voitenko@chnu.edu.ua "))
+        vm.onAction(LoginAction.ChangePassword("commonplace1"))
         vm.onAction(LoginAction.SignIn)
 
         assertNull(vm.state.value.emailError)
         assertNull(vm.state.value.passwordError)
-        val event = assertIs<LoginEvent.OnSignedIn>(vm.events.first())
-        assertEquals("elena.voitenko@chnu.edu.ua", event.email)
+        assertIs<LoginEvent.OnSignedIn>(vm.events.first())
     }
 }

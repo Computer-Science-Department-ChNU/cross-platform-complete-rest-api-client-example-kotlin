@@ -58,7 +58,7 @@ import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.Hyphens
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import florilegium.shared.generated.resources.Res
@@ -76,6 +76,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import ua.edu.chnu.kkn.florilegium.ui.common.CenteredScrollColumn
 import ua.edu.chnu.kkn.florilegium.ui.common.ObserveEvents
+import ua.edu.chnu.kkn.florilegium.ui.common.PreviewTwoPaneLightDark
 import ua.edu.chnu.kkn.florilegium.ui.common.isTwoPaneLayout
 import ua.edu.chnu.kkn.florilegium.ui.theme.Florilegium
 import ua.edu.chnu.kkn.florilegium.ui.theme.FlorilegiumTheme
@@ -95,20 +96,28 @@ internal fun OnboardingScreen(
     modifier: Modifier = Modifier,
     viewModel: OnboardingViewModel = koinViewModel()
 ) {
-    val pages = remember { OnboardingPage.entries.toPersistentList() }
-    val pagerState = rememberPagerState { pages.size }
-    val scope = rememberCoroutineScope()
-
     ObserveEvents(viewModel.events) { event ->
         when (event) {
             is OnboardingEvent.OnOnboardingPassed -> onFinishOnboarding()
         }
     }
 
-    val onSkip = { viewModel.onAction(OnboardingAction.OnboardingPassed) }
+    OnboardingContent(onAction = viewModel::onAction, modifier = modifier)
+}
+
+@Composable
+internal fun OnboardingContent(
+    onAction: (OnboardingAction) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val pages = remember { OnboardingPage.entries.toPersistentList() }
+    val pagerState = rememberPagerState { pages.size }
+    val scope = rememberCoroutineScope()
+
+    // Paging is UI-only state, so it stays here; only leaving onboarding goes to the ViewModel.
     val onNext = {
         if (pagerState.currentPage == pages.lastIndex) {
-            viewModel.onAction(OnboardingAction.OnboardingPassed)
+            onAction(OnboardingAction.CompleteOnboarding)
         } else {
             scope.launch { pagerState.animateScrollToPage(pagerState.currentPage + 1) }
         }
@@ -117,9 +126,9 @@ internal fun OnboardingScreen(
     val onSelectPage = { page: Int -> scope.launch { pagerState.animateScrollToPage(page) }; Unit }
 
     if (isTwoPaneLayout()) {
-        OnboardingTwoPane(pages, pagerState, onNext, onSkip, onSelectPage, modifier)
+        OnboardingTwoPane(pages, pagerState, onAction, onNext, onSelectPage, modifier)
     } else {
-        OnboardingSinglePane(pages, pagerState, onNext, onSkip, onSelectPage, modifier)
+        OnboardingSinglePane(pages, pagerState, onAction, onNext, onSelectPage, modifier)
     }
 }
 
@@ -127,8 +136,8 @@ internal fun OnboardingScreen(
 private fun OnboardingSinglePane(
     pages: PersistentList<OnboardingPage>,
     pagerState: PagerState,
+    onAction: (OnboardingAction) -> Unit,
     onNext: () -> Unit,
-    onSkip: () -> Unit,
     onSelectPage: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -146,7 +155,7 @@ private fun OnboardingSinglePane(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             PageCounter(pagerState.currentPage, pages.size)
-            SkipButton(onSkip)
+            SkipButton(onClick = { onAction(OnboardingAction.CompleteOnboarding) })
         }
 
         HorizontalPager(
@@ -183,8 +192,8 @@ private fun OnboardingSinglePane(
 private fun OnboardingTwoPane(
     pages: PersistentList<OnboardingPage>,
     pagerState: PagerState,
+    onAction: (OnboardingAction) -> Unit,
     onNext: () -> Unit,
-    onSkip: () -> Unit,
     onSelectPage: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -267,7 +276,7 @@ private fun OnboardingTwoPane(
                     onClick = onNext,
                     contentPadding = PaddingValues(horizontal = Space.x8, vertical = 13.dp),
                 )
-                SkipButton(onSkip)
+                SkipButton(onClick = { onAction(OnboardingAction.CompleteOnboarding) })
             }
         }
     }
@@ -411,10 +420,18 @@ private fun PageIndicator(
     }
 }
 
-@Preview
+@PreviewLightDark
 @Composable
-private fun OnboardingScreenPreview() {
+private fun OnboardingContentPreview() {
     FlorilegiumTheme {
-        OnboardingScreen(onFinishOnboarding = {})
+        OnboardingContent(onAction = {})
+    }
+}
+
+@PreviewTwoPaneLightDark
+@Composable
+private fun OnboardingContentTwoPanePreview() {
+    FlorilegiumTheme {
+        OnboardingContent(onAction = {})
     }
 }
