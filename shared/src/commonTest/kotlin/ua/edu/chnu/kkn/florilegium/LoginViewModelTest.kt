@@ -8,14 +8,18 @@ import florilegium.shared.generated.resources.login_error_password_no_digit
 import florilegium.shared.generated.resources.login_error_password_no_letter
 import florilegium.shared.generated.resources.login_error_password_spaces
 import florilegium.shared.generated.resources.login_error_password_too_short
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.withTimeoutOrNull
+import ua.edu.chnu.kkn.florilegium.ui.login.LoginAction
+import ua.edu.chnu.kkn.florilegium.ui.login.LoginEvent
 import ua.edu.chnu.kkn.florilegium.ui.login.LoginValidator
 import ua.edu.chnu.kkn.florilegium.ui.login.LoginViewModel
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
+import kotlin.test.assertIs
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
-import kotlin.test.assertTrue
 
 class LoginValidatorTest {
 
@@ -50,59 +54,72 @@ class LoginViewModelTest {
     @Test
     fun typingDoesNotValidateBeforeFirstSubmit() {
         val vm = LoginViewModel()
-        vm.onEmailChange("not-an-email")
-        vm.onPasswordChange("x")
+        vm.onAction(LoginAction.EmailChanged("not-an-email"))
+        vm.onAction(LoginAction.PasswordChanged("x"))
 
-        assertNull(vm.uiState.value.emailError)
-        assertNull(vm.uiState.value.passwordError)
+        assertNull(vm.state.value.emailError)
+        assertNull(vm.state.value.passwordError)
     }
 
     @Test
-    fun submitShowsSeparateErrorsForEachField() {
+    fun submitShowsSeparateErrorsForEachField() = runTest {
         val vm = LoginViewModel()
-        vm.onEmailChange("not-an-email")
-        vm.onPasswordChange("short1")
+        vm.onAction(LoginAction.EmailChanged("not-an-email"))
+        vm.onAction(LoginAction.PasswordChanged("short1"))
+        vm.onAction(LoginAction.SignIn)
 
-        assertFalse(vm.signIn())
-        assertNotNull(vm.uiState.value.emailError)
-        assertEquals(Res.string.login_error_password_too_short, vm.uiState.value.passwordError)
+        assertNotNull(vm.state.value.emailError)
+        assertEquals(Res.string.login_error_password_too_short, vm.state.value.passwordError)
+        assertNull(withTimeoutOrNull(1) { vm.events.first() })
     }
 
     @Test
     fun errorDisappearsOnceFieldBecomesValid() {
         val vm = LoginViewModel()
-        vm.onEmailChange("name@example")
-        vm.onPasswordChange("commonplace1")
-        vm.signIn()
-        assertNotNull(vm.uiState.value.emailError)
-        assertNull(vm.uiState.value.passwordError)
+        vm.onAction(LoginAction.EmailChanged("name@example"))
+        vm.onAction(LoginAction.PasswordChanged("commonplace1"))
+        vm.onAction(LoginAction.SignIn)
+        assertNotNull(vm.state.value.emailError)
+        assertNull(vm.state.value.passwordError)
 
-        vm.onEmailChange("name@example.com")
-        assertNull(vm.uiState.value.emailError)
+        vm.onAction(LoginAction.EmailChanged("name@example.com"))
+        assertNull(vm.state.value.emailError)
 
         // A field that was valid at submit time doesn't start showing errors while typing.
-        vm.onPasswordChange("x")
-        assertNull(vm.uiState.value.passwordError)
+        vm.onAction(LoginAction.PasswordChanged("x"))
+        assertNull(vm.state.value.passwordError)
     }
 
     @Test
     fun errorMessageFollowsTheCurrentlyBrokenRule() {
         val vm = LoginViewModel()
-        vm.signIn()
-        assertEquals(Res.string.login_error_password_empty, vm.uiState.value.passwordError)
+        vm.onAction(LoginAction.SignIn)
+        assertEquals(Res.string.login_error_password_empty, vm.state.value.passwordError)
 
-        vm.onPasswordChange("abcdefgh")
-        assertEquals(Res.string.login_error_password_no_digit, vm.uiState.value.passwordError)
+        vm.onAction(LoginAction.PasswordChanged("abcdefgh"))
+        assertEquals(Res.string.login_error_password_no_digit, vm.state.value.passwordError)
     }
 
     @Test
-    fun signInSucceedsWithValidInput() {
+    fun togglesPasswordVisibility() {
         val vm = LoginViewModel()
-        vm.onEmailChange("elena.voitenko@chnu.edu.ua")
-        vm.onPasswordChange("commonplace1")
+        vm.onAction(LoginAction.TogglePasswordVisibility)
+        assertEquals(true, vm.state.value.isPasswordVisible)
 
-        assertTrue(vm.signIn())
-        assertNull(vm.uiState.value.emailError)
-        assertNull(vm.uiState.value.passwordError)
+        vm.onAction(LoginAction.TogglePasswordVisibility)
+        assertEquals(false, vm.state.value.isPasswordVisible)
+    }
+
+    @Test
+    fun signInEmitsSignedInEventWithTrimmedEmail() = runTest {
+        val vm = LoginViewModel()
+        vm.onAction(LoginAction.EmailChanged(" elena.voitenko@chnu.edu.ua "))
+        vm.onAction(LoginAction.PasswordChanged("commonplace1"))
+        vm.onAction(LoginAction.SignIn)
+
+        assertNull(vm.state.value.emailError)
+        assertNull(vm.state.value.passwordError)
+        val event = assertIs<LoginEvent.OnSignedIn>(vm.events.first())
+        assertEquals("elena.voitenko@chnu.edu.ua", event.email)
     }
 }

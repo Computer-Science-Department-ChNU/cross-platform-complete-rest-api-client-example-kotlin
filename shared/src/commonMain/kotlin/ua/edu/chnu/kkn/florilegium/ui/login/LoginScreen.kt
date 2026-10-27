@@ -54,6 +54,7 @@ import florilegium.shared.generated.resources.login_title
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import ua.edu.chnu.kkn.florilegium.ui.common.CenteredScrollColumn
+import ua.edu.chnu.kkn.florilegium.ui.common.ObserveEvents
 import ua.edu.chnu.kkn.florilegium.ui.common.isTwoPaneLayout
 import ua.edu.chnu.kkn.florilegium.ui.theme.Florilegium
 import ua.edu.chnu.kkn.florilegium.ui.theme.Space
@@ -63,37 +64,42 @@ private val EpigraphMaxWidth = 440.dp
 private val FormMaxWidth = 520.dp
 
 @Composable
-fun LoginScreen(
-    onSignedIn: (email: String) -> Unit,
+internal fun LoginScreen(
+    onSignedIn: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: LoginViewModel = koinViewModel(),
 ) {
-    val state by viewModel.uiState.collectAsStateWithLifecycle()
-    val submit = {
-        if (viewModel.signIn()) onSignedIn(state.email.trim())
+    val state by viewModel.state.collectAsStateWithLifecycle()
+
+    ObserveEvents(viewModel.events) { event ->
+        when (event) {
+            is LoginEvent.OnSignedIn -> onSignedIn()
+        }
     }
+
+    val login = { viewModel.onAction(LoginAction.SignIn) }
 
     val loginForm = @Composable {
         LoginForm(
             state = state,
-            onEmailChange = viewModel::onEmailChange,
-            onPasswordChange = viewModel::onPasswordChange,
-            onTogglePasswordVisibility = viewModel::onTogglePasswordVisibility,
-            onSubmit = submit,
+            onEmailChange = { viewModel.onAction(LoginAction.EmailChanged(it)) },
+            onPasswordChange = { viewModel.onAction(LoginAction.PasswordChanged(it)) },
+            onTogglePasswordVisibility = { viewModel.onAction(LoginAction.TogglePasswordVisibility) },
+            login = login,
         )
     }
 
     if (isTwoPaneLayout()) {
-        LoginTwoPane(loginForm = loginForm, onSubmit = submit, modifier = modifier)
+        LoginTwoPane(loginForm = loginForm, login = login, modifier = modifier)
     } else {
-        LoginSinglePane(form = loginForm, onSubmit = submit, modifier = modifier)
+        LoginSinglePane(loginForm = loginForm, login = login, modifier = modifier)
     }
 }
 
 @Composable
 private fun LoginSinglePane(
-    form: @Composable () -> Unit,
-    onSubmit: () -> Unit,
+    loginForm: @Composable () -> Unit,
+    login: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     CenteredScrollColumn(
@@ -119,9 +125,9 @@ private fun LoginSinglePane(
             )
         }
         Spacer(Modifier.fillMaxWidth().height(1.dp).background(Florilegium.colors.line))
-        form()
+        loginForm()
         SignInButton(
-            onClick = onSubmit,
+            onClick = login,
             modifier = Modifier.fillMaxWidth(),
             contentPadding = PaddingValues(14.dp),
         )
@@ -131,7 +137,7 @@ private fun LoginSinglePane(
 @Composable
 private fun LoginTwoPane(
     loginForm: @Composable () -> Unit,
-    onSubmit: () -> Unit,
+    login: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -180,7 +186,7 @@ private fun LoginTwoPane(
                 )
                 loginForm()
                 SignInButton(
-                    onClick = onSubmit,
+                    onClick = login,
                     contentPadding = PaddingValues(horizontal = 34.dp, vertical = 13.dp),
                 )
             }
@@ -199,11 +205,11 @@ private fun Eyebrow() {
 
 @Composable
 private fun LoginForm(
-    state: LoginUiState,
+    state: LoginState,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
     onTogglePasswordVisibility: () -> Unit,
-    onSubmit: () -> Unit,
+    login: () -> Unit,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(Space.x4)) {
         LabeledField(
@@ -218,7 +224,7 @@ private fun LoginForm(
             value = state.password,
             onValueChange = onPasswordChange,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done),
-            keyboardActions = KeyboardActions(onDone = { onSubmit() }),
+            keyboardActions = KeyboardActions(onDone = { login() }),
             visualTransformation = if (state.isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             errorMessage = state.passwordError?.let { stringResource(it) },
             trailing = {
