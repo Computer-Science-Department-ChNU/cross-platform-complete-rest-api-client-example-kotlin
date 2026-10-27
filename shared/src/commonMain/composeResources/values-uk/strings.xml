@@ -27,6 +27,8 @@
     <string name="login_password_label">Пароль</string>
     <string name="login_password_show">Показати</string>
     <string name="login_password_hide">Сховати</string>
+    <string name="login_quote">«Час відкриває істину.»</string>
+    <string name="login_quote_author">Сенека</string>
     <string name="login_sign_in">Увійти</string>
 
     <string name="login_error_email_empty">Введіть електронну пошту</string>

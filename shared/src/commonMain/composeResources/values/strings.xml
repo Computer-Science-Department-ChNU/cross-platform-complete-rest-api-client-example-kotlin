@@ -27,6 +27,8 @@
     <string name="login_password_label">Password</string>
     <string name="login_password_show">Show</string>
     <string name="login_password_hide">Hide</string>
+    <string name="login_quote">“Time discovers truth.”</string>
+    <string name="login_quote_author">Seneca</string>
     <string name="login_sign_in">Sign in</string>
 
     <string name="login_error_email_empty">Enter your email</string>

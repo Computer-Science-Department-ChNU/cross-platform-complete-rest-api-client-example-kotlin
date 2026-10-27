@@ -3,19 +3,26 @@ package ua.edu.chnu.kkn.florilegium.ui.login
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeContent
 import androidx.compose.foundation.layout.safeContentPadding
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -39,13 +46,21 @@ import florilegium.shared.generated.resources.login_email_label
 import florilegium.shared.generated.resources.login_password_hide
 import florilegium.shared.generated.resources.login_password_label
 import florilegium.shared.generated.resources.login_password_show
+import florilegium.shared.generated.resources.login_quote
+import florilegium.shared.generated.resources.login_quote_author
 import florilegium.shared.generated.resources.login_sign_in
 import florilegium.shared.generated.resources.login_subtitle
 import florilegium.shared.generated.resources.login_title
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import ua.edu.chnu.kkn.florilegium.ui.common.CenteredScrollColumn
+import ua.edu.chnu.kkn.florilegium.ui.common.isTwoPaneLayout
 import ua.edu.chnu.kkn.florilegium.ui.theme.Florilegium
 import ua.edu.chnu.kkn.florilegium.ui.theme.Space
+
+private const val EpigraphPaneWeight = 0.46f
+private val EpigraphMaxWidth = 440.dp
+private val FormMaxWidth = 520.dp
 
 @Composable
 fun LoginScreen(
@@ -58,46 +73,115 @@ fun LoginScreen(
         if (viewModel.signIn()) onSignedIn(state.email.trim())
     }
 
-    BoxWithConstraints(
+    val loginForm = @Composable {
+        LoginForm(
+            state = state,
+            onEmailChange = viewModel::onEmailChange,
+            onPasswordChange = viewModel::onPasswordChange,
+            onTogglePasswordVisibility = viewModel::onTogglePasswordVisibility,
+            onSubmit = submit,
+        )
+    }
+
+    if (isTwoPaneLayout()) {
+        LoginTwoPane(loginForm = loginForm, onSubmit = submit, modifier = modifier)
+    } else {
+        LoginSinglePane(form = loginForm, onSubmit = submit, modifier = modifier)
+    }
+}
+
+@Composable
+private fun LoginSinglePane(
+    form: @Composable () -> Unit,
+    onSubmit: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    CenteredScrollColumn(
+        spacing = Space.x6,
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
             .safeContentPadding(),
+        contentPadding = PaddingValues(start = Space.x6, end = Space.x6, bottom = Space.x8),
+    ) {
+        Column {
+            Eyebrow()
+            Text(
+                text = stringResource(Res.string.login_title),
+                modifier = Modifier.padding(vertical = Space.x2),
+                style = MaterialTheme.typography.displaySmall.copy(fontSize = 38.sp, lineHeight = 40.sp),
+                color = MaterialTheme.colorScheme.onBackground,
+            )
+            Text(
+                text = stringResource(Res.string.login_subtitle),
+                style = MaterialTheme.typography.bodySmall.copy(fontSize = 13.sp, lineHeight = 21.sp),
+                color = Florilegium.colors.muted,
+            )
+        }
+        Spacer(Modifier.fillMaxWidth().height(1.dp).background(Florilegium.colors.line))
+        form()
+        SignInButton(
+            onClick = onSubmit,
+            modifier = Modifier.fillMaxWidth(),
+            contentPadding = PaddingValues(14.dp),
+        )
+    }
+}
+
+@Composable
+private fun LoginTwoPane(
+    loginForm: @Composable () -> Unit,
+    onSubmit: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background),
     ) {
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(start = Space.x6, end = Space.x6, bottom = Space.x8),
-            verticalArrangement = Arrangement.spacedBy(Space.x6, Alignment.CenterVertically),
+                .weight(EpigraphPaneWeight)
+                .fillMaxHeight()
+                .background(Florilegium.colors.soft)
+                .windowInsetsPadding(WindowInsets.safeContent.only(WindowInsetsSides.Start + WindowInsetsSides.Vertical))
+                .padding(Space.x8),
+            verticalArrangement = Arrangement.spacedBy(Space.x4, Alignment.CenterVertically),
         ) {
-            Column {
-                Eyebrow()
+            Eyebrow()
+            Text(
+                text = stringResource(Res.string.login_quote),
+                modifier = Modifier.widthIn(max = EpigraphMaxWidth),
+                style = MaterialTheme.typography.displayMedium.copy(fontSize = 38.sp, lineHeight = 48.sp),
+                color = MaterialTheme.colorScheme.onBackground,
+            )
+            Text(
+                text = stringResource(Res.string.login_quote_author).uppercase(),
+                style = MaterialTheme.typography.labelMedium.copy(letterSpacing = 2.sp),
+                color = Florilegium.colors.muted,
+            )
+        }
+        Spacer(Modifier.fillMaxHeight().width(1.dp).background(Florilegium.colors.line))
+        Box(
+            modifier = Modifier
+                .weight(1f - EpigraphPaneWeight)
+                .fillMaxHeight()
+                .windowInsetsPadding(WindowInsets.safeContent.only(WindowInsetsSides.End + WindowInsetsSides.Vertical)),
+        ) {
+            CenteredScrollColumn(
+                spacing = Space.x6,
+                modifier = Modifier.widthIn(max = FormMaxWidth),
+                contentPadding = PaddingValues(Space.x8),
+            ) {
                 Text(
                     text = stringResource(Res.string.login_title),
-                    modifier = Modifier.padding(vertical = Space.x2),
-                    style = MaterialTheme.typography.displaySmall.copy(fontSize = 38.sp, lineHeight = 40.sp),
+                    style = MaterialTheme.typography.displaySmall.copy(fontSize = 40.sp, lineHeight = 44.sp),
                     color = MaterialTheme.colorScheme.onBackground,
                 )
-                Text(
-                    text = stringResource(Res.string.login_subtitle),
-                    style = MaterialTheme.typography.bodySmall.copy(fontSize = 13.sp, lineHeight = 21.sp),
-                    color = Florilegium.colors.muted,
-                )
-            }
-            Spacer(Modifier.fillMaxWidth().height(1.dp).background(Florilegium.colors.line))
-            LoginForm(
-                state = state,
-                onEmailChange = viewModel::onEmailChange,
-                onPasswordChange = viewModel::onPasswordChange,
-                onTogglePasswordVisibility = viewModel::onTogglePasswordVisibility,
-                onSubmit = submit,
-            )
-            Column(verticalArrangement = Arrangement.spacedBy(Space.x3)) {
+                loginForm()
                 SignInButton(
-                    onClick = submit,
-                    modifier = Modifier.fillMaxWidth(),
-                    contentPadding = PaddingValues(14.dp),
+                    onClick = onSubmit,
+                    contentPadding = PaddingValues(horizontal = 34.dp, vertical = 13.dp),
                 )
             }
         }
@@ -152,6 +236,7 @@ private fun LoginForm(
         )
     }
 }
+
 @Composable
 private fun LabeledField(
     label: String,
